@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  services:
+    pomerium:
+    image: pomerium/pomerium:latest
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./pomerium:/pomerium:ro
+    depends_on:
+      - keycloak
+    networks:
+      - ztna-net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.6
+    command: start-dev
+    environment:
+      KC_DB: dev-file           # ✅ FIX: dev-file au lieu de dev
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "ztna2026"
+    ports:
+      - "8080:8080"
+    networks:
+      - ztna-net
+    restart: unless-stopped
+
+networks:
+  ztna-net:
+    driver: bridge

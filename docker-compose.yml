@@ -1,0 +1,31 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: keycloak-ztna
+    command: start --db=dev-file --cache=local
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=ZtnaAdmin2026*
+      - KC_HOSTNAME_STRICT=false
+      - KC_HTTP_ENABLED=true
+    ports:
+      - "8080:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    restart: unless-stopped
+
+  pomerium:
+    image: pomerium/pomerium:latest
+    container_name: pomerium-ztna
+    command: --config /pomerium/config.yaml
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./config.yaml:/pomerium/config.yaml:ro
+    depends_on:
+      - keycloak
+    restart: unless-stopped
+
+volumes:
+  keycloak_data:

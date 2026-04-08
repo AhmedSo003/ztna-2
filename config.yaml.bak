@@ -1,0 +1,34 @@
+# ============================================
+#   POMERIUM - CONFIG ZTNA LAB
+#   Keycloak OIDC + Microsegmentation
+# ============================================
+
+# --- All-in-one mode ---
+address: :443
+insecure_server: :80
+
+# --- Authenticate Service ---
+authenticate_service_url: https://auth.ztna.lab
+
+# --- Secrets ---
+cookie_secret: Unx1SrTc9Yd3CWxYoi3kgraGiCkxQ9W/l5hLJq+ILLs=
+shared_secret: QXrdJG1fx9Ezgdg06qC9ZVwJQL4prwSRyjcz101Xp+s=
+
+# --- Identity Provider: Keycloak OIDC ---
+idp_provider: oidc
+idp_provider_url: http://192.168.100.10:8080/realms/ztna
+idp_client_id: pomerium
+idp_client_secret: bcmt5inj9taEvkcmoehm4NttZQIuLrae
+
+# --- Routes / Policy ---
+policy:
+  - from: https://app.ztna.lab
+    to: http://192.168.100.20:80
+    pass_identity_headers: true
+    allowed_users:
+      - user-test
+    allow_any_authenticated_user: false
+
+  - from: https://auth.ztna.lab
+    to: http://127.0.0.1:80
+    pass_identity_headers: true

@@ -3,14 +3,13 @@ http_redirect_addr: :80
 
 authenticate_service_url: https://auth.ztna.lab
 
-# Regénère ces secrets avant de relancer
-cookie_secret: XZnc7PWy5LZh41Ct0eYywWfJGI8574xxN58k+0kK26w=
-shared_secret: kozFtp49PxXB1G4HJ5y1peTgKNnYPh7ZlGVu52MFMx4=
+cookie_secret: ${POMERIUM_COOKIE_SECRET}
+shared_secret: ${POMERIUM_SHARED_SECRET}
 
 idp_provider: oidc
 idp_provider_url: http://keycloak:8080/realms/ztna
 idp_client_id: pomerium
-idp_client_secret: bcmt5inj9taEvkcmoehm4NttZQIuLrae
+idp_client_secret: ${POMERIUM_IDP_CLIENT_SECRET}
 
 routes:
   - from: https://dev.ztna.lab
@@ -19,10 +18,10 @@ routes:
     policy:
       allow:
         or:
-          - email:
-              is: admin@ztna.lab
-          - email:
-              is: ahmed@dev.lab 
+          - groups:
+              has: dev-users
+          - groups:
+              has: admins
 
   - from: https://rh.ztna.lab
     to: http://192.168.100.20:5002
@@ -30,8 +29,7 @@ routes:
     policy:
       allow:
         or:
-          - email:
-              is: admin@ztna.lab
-          - email:
-              is: hbib@rh.lab    
-	          
+          - groups:
+              has: rh-users
+          - groups:
+              has: admins
